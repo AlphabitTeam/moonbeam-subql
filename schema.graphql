@@ -42,6 +42,7 @@ type Event @entity {
 
 type Account @entity {
   id: ID!
+  #name: String
   # Balance
   totalBalance: BigInt
   freeBalance: BigInt
@@ -55,13 +56,49 @@ type Account @entity {
   createdAt: String
 }
 
-type Transfer @entity {
+type Log @entity {
   id: ID!
-  index: Int!
-  block: Block!
-  blockNumber: BigInt! @index(unique: false)
-  from: Account!
-  to: Account!
-  value: BigInt!
-  extrinsic: Extrinsic
+  blockNumber: BigInt
+  transaction: Transaction
+  transactionIndex: Int
+  logIndex: Int
+  timestamp: Date
+  address: String
+  #data: String
+  #topics: String
+  #arguments: String
+  removed: Boolean
 }
+
+type Transaction @entity {
+  id: ID!
+  # MoonbeamCall.blockNumber? type, that's why it isn't Block!
+  block: Block
+  blockNumber: BigInt
+  #extrinsic: Extrinsic
+  #extrinsicIndex: Int
+  from: Account
+  to: Account
+  success: Boolean
+  value: BigInt
+  nonce: Int
+  gasLimit: BigInt
+  gasPrice: BigInt
+  maxFeePerGas: BigInt
+  type: Int
+  #data: String
+  #arguments: String
+  logs: [Log] @derivedFrom(field: "transaction")
+  # gasUsed/fee, extrinsic, transfers
+}
+
+# type Transfer @entity {
+#   id: ID!
+#   index: Int!
+#   block: Block!
+#   blockNumber: BigInt! @index(unique: false)
+#   from: Account!
+#   to: Account!
+#   value: BigInt!
+#   extrinsic: Extrinsic
+# }

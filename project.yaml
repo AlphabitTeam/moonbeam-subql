@@ -11,8 +11,8 @@ network:
   endpoint: wss://moonbeam.api.onfinality.io/public-ws
   genesisHash: '0xfe58ea77779b7abda7da4ec526d14db9b1e9cd40a217c34892af80a9b332b76d'
   dictionary: 'https://api.subquery.network/sq/subquery/moonbeam-dictionary'
-  #chaintypes:
-  #  file: "./types.yaml"
+  chaintypes:
+    file: "./types.yaml"
 
 dataSources:
   - kind: substrate/Runtime
@@ -26,3 +26,14 @@ dataSources:
           kind: substrate/EventHandler
         - handler: handleCall
           kind: substrate/CallHandler
+  - kind: substrate/Moonbeam
+    startBlock: 200_000
+    processor:
+      file: './node_modules/@subql/contract-processors/dist/moonbeam.js'
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        - handler: handleMoonbeamEvent
+          kind: substrate/MoonbeamEvent
+        - handler: handleMoonbeamCall
+          kind: substrate/MoonbeamCall

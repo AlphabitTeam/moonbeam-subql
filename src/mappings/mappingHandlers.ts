@@ -1,15 +1,24 @@
 import { SubstrateExtrinsic, SubstrateEvent, SubstrateBlock } from "@subql/types";
-import { createEvent, createExtrinsic, createBlock } from '../handlers';
+import { MoonbeamEvent, MoonbeamCall } from '@subql/contract-processors/dist/moonbeam';
+import { createEvent, createExtrinsic, createBlock, createLog, createTransaction } from '../handlers';
 
 
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
-    await createBlock(block)
+  await createBlock(block)
 }
 
 export async function handleEvent(event: SubstrateEvent): Promise<void> {
-    await createEvent(event)
+  await createEvent(event)
 }
 
 export async function handleCall(extrinsic: SubstrateExtrinsic): Promise<void> {
-    await createExtrinsic(extrinsic)
+  await createExtrinsic(extrinsic)
+}
+
+export async function handleMoonbeamEvent(event: MoonbeamEvent): Promise<void> {
+  await createLog(event)
+}
+
+export async function handleMoonbeamCall(call: MoonbeamCall): Promise<void> {
+  await createTransaction(call)
 }
