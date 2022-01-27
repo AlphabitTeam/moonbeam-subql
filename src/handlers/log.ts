@@ -23,7 +23,7 @@ export async function ensureLog(event: MoonbeamEvent): Promise<Log> {
   return entity
 }
 
-export async function createLog(event: MoonbeamEvent): Promise<Log> {
+export async function createLog(event: MoonbeamEvent): Promise<void> {
   const entity = await ensureLog(event)
   const block = await ensureBlock(event.blockNumber.toString())
   const address = await ensureAccount(event.address)
@@ -34,5 +34,4 @@ export async function createLog(event: MoonbeamEvent): Promise<Log> {
   entity.removed = event.removed
   //data, topics, arguments
   await entity.save()
-  return entity
 }

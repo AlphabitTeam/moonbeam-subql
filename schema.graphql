@@ -42,11 +42,13 @@ type Event @entity {
 
 type Account @entity {
   id: ID!
+  nonce: Int
+  updateAt: BigInt
   #name: String
   # Balance
   totalBalance: BigInt
   freeBalance: BigInt
-  #reducibleBalance: BigInt
+  reducibleBalance: BigInt
   reservedBalance: BigInt
   miscFrozenBalance: BigInt
   feeFrozenBalance: BigInt
@@ -92,13 +94,13 @@ type Transaction @entity {
   # gasUsed/fee, extrinsic, transfers
 }
 
-# type Transfer @entity {
-#   id: ID!
-#   index: Int!
-#   block: Block!
-#   blockNumber: BigInt! @index(unique: false)
-#   from: Account!
-#   to: Account!
-#   value: BigInt!
-#   extrinsic: Extrinsic
-# }
+type Transfer @entity {
+  id: ID!
+  index: Int!
+  block: Block!
+  blockNumber: BigInt! @index(unique: false)
+  from: Account!
+  to: Account!
+  value: BigInt!
+  extrinsic: Extrinsic
+}

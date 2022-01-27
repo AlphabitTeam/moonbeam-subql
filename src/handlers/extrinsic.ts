@@ -21,7 +21,7 @@ export async function ensureExtrinsic(extrinsic: SubstrateExtrinsic): Promise<Ex
   return entity
 }
 
-export async function createExtrinsic(extrinsic: SubstrateExtrinsic): Promise<Extrinsic> {
+export async function createExtrinsic(extrinsic: SubstrateExtrinsic): Promise<void> {
   const entity = await ensureExtrinsic(extrinsic)
   const isSigned = extrinsic.extrinsic.isSigned
   if (isSigned) {
@@ -35,5 +35,4 @@ export async function createExtrinsic(extrinsic: SubstrateExtrinsic): Promise<Ex
   entity.success = extrinsic.success
   await entity.save()
   // day.extrinsics
-  return entity
 }

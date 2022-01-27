@@ -17,7 +17,7 @@ export async function ensureTransaction(recordId: string, blockId: string|null):
   return entity
 }
 
-export async function createTransaction(call: MoonbeamCall): Promise<Transaction> {
+export async function createTransaction(call: MoonbeamCall): Promise<void> {
   const entity = await ensureTransaction(call.hash, call.blockNumber?.toString())
   const from = await ensureAccount(call.from.toString())
   const to = call.to ? await ensureAccount(call.to.toString()) : null
@@ -34,5 +34,4 @@ export async function createTransaction(call: MoonbeamCall): Promise<Transaction
   //entity.data = call.data.toString()
   //entity.arguments = call.args?.toString()
   await entity.save()
-  return entity
 } 

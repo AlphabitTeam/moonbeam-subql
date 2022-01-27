@@ -11,7 +11,7 @@ export async function ensureBlock(recordId: string): Promise<Block> {
   return entity
 }
 
-export async function createBlock(block: SubstrateBlock): Promise<Block> {
+export async function createBlock(block: SubstrateBlock): Promise<void> {
   const entity = await ensureBlock(block.block.header.number.toString())
   entity.hash = block.block.hash.toString()
   entity.timestamp = block.timestamp
@@ -19,5 +19,4 @@ export async function createBlock(block: SubstrateBlock): Promise<Block> {
   entity.specVersion = block.specVersion
   entity.stateRoot = block.block.header.stateRoot.toString()  
   await entity.save()
-  return entity
 }
