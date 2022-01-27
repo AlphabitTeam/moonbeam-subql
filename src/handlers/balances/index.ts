@@ -54,16 +54,16 @@ export async function transfer(data:DispatchedEventData): Promise<void> {
   await updateAccount(address1, blockNumber)
 
   const transfer = Transfer.create({
-		id: data.event.id,
-		index: data.event.index,
-		blockId: data.event.blockId,
-		blockNumber: data.event.blockNumber,
-		extrinsicId: data.event.extrinsicId,
-		fromId: address1.toLowerCase(),
-		toId: address2.toLowerCase(),
-		value: balance.toBigInt()
-	})
-	await transfer.save()
+    id: data.event.id,
+    index: data.event.index,
+    blockId: data.event.blockId,
+    blockNumber: data.event.blockNumber,
+    extrinsicId: data.event.extrinsicId,
+    fromId: address1.toLowerCase(),
+    toId: address2.toLowerCase(),
+    value: balance.toBigInt()
+  })
+  await transfer.save()
   // aggregate
 }
 

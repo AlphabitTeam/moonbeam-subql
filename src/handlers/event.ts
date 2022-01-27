@@ -7,6 +7,9 @@ import { DispatchedEventData } from "./utils/types";
 import { balanceSet, deposit, dustLost, endowed, reserved,
   reserveRepatriated, slashed, transfer, unreserved, withdraw
 } from "./balances";
+import { createProposal, updateProposal,
+  createReferendum, updateReferendum
+} from "./democracy";
 
 const dispatch = new Dispatcher<DispatchedEventData>();
 async function dummyFunction(): Promise<void> { }
@@ -25,13 +28,13 @@ dispatch.batchRegist([
   {key: 'balances-Withdraw', handler: withdraw},
 
   // Democracy
-  {key: 'democracy-Cancelled', handler: dummyFunction},
-  {key: 'democracy-Executed', handler: dummyFunction},
-  {key: 'democracy-NotPassed', handler: dummyFunction},
-  {key: 'democracy-Passed', handler: dummyFunction},
-  {key: 'democracy-Proposed', handler: dummyFunction},
-  {key: 'democracy-Started', handler: dummyFunction},
-  {key: 'democracy-Tabled', handler: dummyFunction},
+  {key: 'democracy-Cancelled', handler: updateReferendum},
+  {key: 'democracy-Executed', handler: updateReferendum},
+  {key: 'democracy-NotPassed', handler: updateReferendum},
+  {key: 'democracy-Passed', handler: updateReferendum},
+  {key: 'democracy-Proposed', handler: createProposal},
+  {key: 'democracy-Started', handler: createReferendum},
+  {key: 'democracy-Tabled', handler: updateProposal},
   
   // Ethereum/EVM
   {key: 'ethereum-Executed', handler: dummyFunction},
