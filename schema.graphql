@@ -128,3 +128,32 @@ type Referendum @entity {
   executed: Boolean
   # preimage: String, delay: Int, end: BigInt
 }
+
+type Reward @entity {
+  id: ID!
+  blockNumber: BigInt! @index(unique: false)
+  account: Account
+  value: BigInt
+  timestamp: Date
+}
+
+type Delegation @entity {
+  id: ID!
+  delegator: Delegator
+  candidate: Candidate
+  value: BigInt! @index(unique: false)
+}
+
+type Candidate @entity {
+  id: ID!
+  joined: Date
+  isChosen: Boolean
+  delegations: [Delegation] @derivedFrom(field: "candidate")
+  selfBonded: BigInt!
+  # blocks mined, totalBonded
+}
+
+type Delegator @entity {
+  id: ID!
+  delegations: [Delegation] @derivedFrom(field: "delegator")
+}

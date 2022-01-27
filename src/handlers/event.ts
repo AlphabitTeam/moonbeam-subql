@@ -10,6 +10,11 @@ import { balanceSet, deposit, dustLost, endowed, reserved,
 import { createProposal, updateProposal,
   createReferendum, updateReferendum
 } from "./democracy";
+import { createCandidate, createDelegation, createReward,
+  chooseCandidate, removeCandidate,
+  removeDelegator, removeDelegation,
+  changeDelegation, changeSelfBonded
+ } from "./staking";
 
 const dispatch = new Dispatcher<DispatchedEventData>();
 async function dummyFunction(): Promise<void> { }
@@ -45,24 +50,27 @@ dispatch.batchRegist([
   {key: 'identity-IdentitySet', handler: dummyFunction},
 
   // Staking
-  {key: 'parachainStaking-CandidateBondedMore', handler: dummyFunction},
-  {key: 'parachainStaking-CandidateLeft', handler: dummyFunction},
-  {key: 'parachainStaking-CollatorBondedMore', handler: dummyFunction},
-  {key: 'parachainStaking-CollatorBondedLess', handler: dummyFunction},
-  {key: 'parachainStaking-CollatorChosen', handler: dummyFunction},
-  {key: 'parachainStaking-CollatorLeft', handler: dummyFunction},
-  {key: 'parachainStaking-Delegation', handler: dummyFunction},
-  {key: 'parachainStaking-DelegationDecreased', handler: dummyFunction},
-  {key: 'parachainStaking-DelegationIncreased', handler: dummyFunction},
-  {key: 'parachainStaking-DelegatorLeft', handler: dummyFunction},
-  {key: 'parachainStaking-DelegatorLeftCandidate', handler: dummyFunction},
-  {key: 'parachainStaking-JoinedCollatorCandidates', handler: dummyFunction},
-  {key: 'parachainStaking-Nomination', handler: dummyFunction},
-  {key: 'parachainStaking-NominationDecreased', handler: dummyFunction},
-  {key: 'parachainStaking-NominationIncreased', handler: dummyFunction},
-  {key: 'parachainStaking-NominatorLeft', handler: dummyFunction},
-  {key: 'parachainStaking-NominatorLeftCollator', handler: dummyFunction},
-  {key: 'parachainStaking-Rewarded', handler: dummyFunction},
+  // Lingo really change between spec versions
+  // e.g Collator to Candidate and Nomination to Delegation
+  {key: 'parachainStaking-CandidateBondedLess', handler: changeSelfBonded},
+  {key: 'parachainStaking-CandidateBondedMore', handler: changeSelfBonded},
+  {key: 'parachainStaking-CandidateLeft', handler: removeCandidate},
+  {key: 'parachainStaking-CollatorBondedLess', handler: changeSelfBonded},
+  {key: 'parachainStaking-CollatorBondedMore', handler: changeSelfBonded},
+  {key: 'parachainStaking-CollatorChosen', handler: chooseCandidate},
+  {key: 'parachainStaking-CollatorLeft', handler: removeCandidate},
+  {key: 'parachainStaking-Delegation', handler: createDelegation},
+  {key: 'parachainStaking-DelegationDecreased', handler: changeDelegation},
+  {key: 'parachainStaking-DelegationIncreased', handler: changeDelegation},
+  {key: 'parachainStaking-DelegatorLeft', handler: removeDelegator},
+  {key: 'parachainStaking-DelegatorLeftCandidate', handler: removeDelegation},
+  {key: 'parachainStaking-JoinedCollatorCandidates', handler: createCandidate},
+  {key: 'parachainStaking-Nomination', handler: createDelegation},
+  {key: 'parachainStaking-NominationDecreased', handler: changeDelegation},
+  {key: 'parachainStaking-NominationIncreased', handler: changeDelegation},
+  {key: 'parachainStaking-NominatorLeft', handler: removeDelegator},
+  {key: 'parachainStaking-NominatorLeftCollator', handler: removeDelegation},
+  {key: 'parachainStaking-Rewarded', handler: createReward},
 ])
 
 export async function ensureEvent(event: SubstrateEvent): Promise<Event> {
