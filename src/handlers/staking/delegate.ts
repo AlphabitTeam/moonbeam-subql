@@ -1,4 +1,3 @@
-import { BalanceOf } from '@polkadot/types/interfaces'
 import { DispatchedEventData } from "../utils/types";
 import { Delegation, Delegator } from "../../types";
 import { ensureCandidate } from './candidate'
@@ -33,11 +32,11 @@ async function ensureDelegation(delegatorId: string, candidateId: string): Promi
  * @param data 
  */
 export async function createDelegation(data: DispatchedEventData): Promise<void> {
-  const [delegatorId, value, candidateId, added] = data.rawEvent.event.data.toJSON() as [string, BalanceOf, string, string]
+  const [delegatorId, value, candidateId, added] = data.rawEvent.event.data.toJSON() as [string, string, string, string]
   const delegator = await ensureDelegator(delegatorId)
   const candidate = await ensureCandidate(candidateId)
   const entity = await ensureDelegation(delegator.id, candidate.id)
-  entity.value = value.toBigInt()
+  entity.value = BigInt(value)
   await entity.save()
 }
 
@@ -47,11 +46,11 @@ export async function createDelegation(data: DispatchedEventData): Promise<void>
  * @param data 
  */
 export async function changeDelegation(data: DispatchedEventData): Promise<void> {
-  const [delegatorId, candidateId, value, isTop] = data.rawEvent.event.data.toJSON() as [string, string, BalanceOf, boolean]
+  const [delegatorId, candidateId, value, isTop] = data.rawEvent.event.data.toJSON() as [string, string, string, boolean]
   const delegator = await ensureDelegator(delegatorId)
   const candidate = await ensureCandidate(candidateId)
   const entity = await ensureDelegation(delegator.id, candidate.id)
-  entity.value = value.toBigInt()
+  entity.value = BigInt(value)
   await entity.save()
 }
 
@@ -60,7 +59,7 @@ export async function changeDelegation(data: DispatchedEventData): Promise<void>
  * @param data 
  */
 export async function removeDelegation(data: DispatchedEventData): Promise<void> {
-  const [delegatorId, candidateId, unstakedAmount, newAmount] = data.rawEvent.event.data.toJSON() as [string, string, BalanceOf, BalanceOf]
+  const [delegatorId, candidateId, unstakedAmount, newAmount] = data.rawEvent.event.data.toJSON() as [string, string, string, string]
   const entity = await ensureDelegation(delegatorId, candidateId)
   await Delegation.remove(entity.id)
 }

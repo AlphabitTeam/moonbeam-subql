@@ -100,5 +100,10 @@ export async function createEvent(event: SubstrateEvent): Promise<void> {
     entity.extrinsicId = extrinsic.id
   }
   await entity.save()
+
+  await dispatch.dispatch(`${entity.section}-${entity.method}`, {
+    event: entity,
+    rawEvent: event,
+  });
   // day, sections
 }

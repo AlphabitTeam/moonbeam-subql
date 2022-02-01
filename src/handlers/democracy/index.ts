@@ -1,5 +1,3 @@
-import { BalanceOf } from '@polkadot/types/interfaces'
-import { SubstrateEvent } from '@subql/types'
 import { Proposal, Referendum, Timeline } from '../../types'
 import { DispatchedEventData } from "../utils/types"
 
@@ -33,9 +31,9 @@ async function ensureReferendum(recordId: string): Promise<Referendum> {
 }
 
 export async function createProposal(data: DispatchedEventData): Promise<void> {
-  const [propIndex, deposit] = data.rawEvent.event.data.toJSON() as [string, BalanceOf]
+  const [propIndex, deposit] = data.rawEvent.event.data.toJSON() as [string, string]
   const entity = await ensureProposal(propIndex)
-  entity.deposit = deposit.toBigInt()
+  entity.deposit = BigInt(deposit)
   entity.author = data.rawEvent.extrinsic?.extrinsic.signer.toString()
   entity.preimage = data.rawEvent.extrinsic?.extrinsic.args[0].toString()
   entity.timeline = [getTimeline(data)]

@@ -1,9 +1,8 @@
-import { BalanceOf } from '@polkadot/types/interfaces'
 import { DispatchedEventData } from "../utils/types";
 import { Candidate } from "../../types";
 import { removeAllDelegations } from "./delegate"
 
-export async function ensureCandidate(recordId: string, amount?: BalanceOf): Promise<Candidate> {
+export async function ensureCandidate(recordId: string, amount?: bigint): Promise<Candidate> {
   recordId = recordId.toLowerCase()
   let entity = await Candidate.get(recordId)
   if (!entity) {
@@ -11,7 +10,7 @@ export async function ensureCandidate(recordId: string, amount?: BalanceOf): Pro
     // The default amount is because of the genesis candidates
     // This was the self bonded on moonriver (not moonbeam)
     // There's got to be a better way to get genesis candidates
-    entity.selfBonded = amount ? amount.toBigInt() : BigInt(10**21)
+    entity.selfBonded = amount ? amount : BigInt(10**21)
     await entity.save()
   }
   return entity
@@ -22,8 +21,8 @@ export async function ensureCandidate(recordId: string, amount?: BalanceOf): Pro
  * @param data 
  */
 export async function createCandidate(data: DispatchedEventData): Promise<void> {
-  const [candidateId, amount, amountTotal] = data.rawEvent.event.data.toJSON() as [string, BalanceOf, BalanceOf]
-  const entity = await ensureCandidate(candidateId, amount)
+  const [candidateId, amount, amountTotal] = data.rawEvent.event.data.toJSON() as [string, string, string]
+  const entity = await ensureCandidate(candidateId, BigInt(amount))
   entity.joined = data.rawEvent.block.timestamp
   await entity.save()
 }
@@ -44,9 +43,9 @@ export async function chooseCandidate(data: DispatchedEventData): Promise<void> 
  * @param data 
  */
 export async function changeSelfBonded(data: DispatchedEventData): Promise<void> {
-  const [candidateId, amount, newBond] = data.rawEvent.event.data.toJSON() as [string, BalanceOf, BalanceOf]
+  const [candidateId, amount, newBond] = data.rawEvent.event.data.toJSON() as [string, string, string]
   const entity = await ensureCandidate(candidateId)
-  entity.selfBonded = newBond.toBigInt()
+  entity.selfBonded = BigInt(newBond)
   await entity.save()
 }
 
