@@ -34,3 +34,12 @@ export async function updateAccount(address: string, blockNumber: bigint): Promi
   entity.updateAt = blockNumber
   entity.save()
 }
+
+export async function addContract(accountId: string, creatorId: string, createdAt: string): Promise<void> {
+  const account = await ensureAccount(accountId)
+  const creator = await ensureAccount(creatorId)
+  account.isContract = true
+  account.creatorId = creator.id
+  account.createdAt = createdAt
+  await account.save()
+}

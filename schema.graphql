@@ -7,7 +7,20 @@ type Block @entity {
   specVersion: Int
   stateRoot: String
   extrinsicsRoot: String
-  #size: Int
+  
+  # EVM related
+  evmHash: String
+  evmParentHash: String
+  evmStateRoot: String
+  size: Int
+  author: String
+  difficult: Int
+  totalDifficulty: Int
+  gasLimit: Int
+  gasUsed: Int
+  transactionsRoot: String
+  receiptsRoot: String
+  sha3Uncles: String
 
   extrinsics: [Extrinsic] @derivedFrom(field: "block")
   events: [Event] @derivedFrom(field: "block")
@@ -84,14 +97,15 @@ type Transaction @entity {
   success: Boolean
   value: BigInt
   nonce: Int
-  gasLimit: BigInt
-  gasPrice: BigInt
-  maxFeePerGas: BigInt
-  type: Int
+  gasLimit: Int
+  gasPrice: Int
+  maxFeePerGas: Int
+  gasUsed: Int
+  cumulativeGasUsed: Int
   #data: String
   #arguments: String
   logs: [Log] @derivedFrom(field: "transaction")
-  # gasUsed/fee, extrinsic, transfers
+  # extrinsic, transfers
 }
 
 type Transfer @entity {

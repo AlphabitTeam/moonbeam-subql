@@ -21,3 +21,24 @@ export type AccountType = {
     feeFrozen: Balance
   }
 }
+
+export type EthBlock = {
+  evmHash: string
+  evmParentHash: string
+  evmStateRoot: string
+  size: number
+  author: string
+  difficult: number
+  totalDifficulty: number
+  gasLimit: number
+  gasUsed: number
+  transactionsRoot: string
+  receiptsRoot: string
+  sha3Uncles: string
+}
+
+export type TransactionReceipt = {
+  gasUsed: number
+  cumulativeGasUsed: number
+  contractAddress: string|null
+}

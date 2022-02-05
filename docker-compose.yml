@@ -32,6 +32,7 @@ services:
     command:
       - -f=/app
       - --db-schema=app
+      - --unsafe
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
       interval: 3s
@@ -58,3 +59,4 @@ services:
       - --name=app
       - --playground
       - --indexer=http://subquery-node:3000
+      - --unsafe
