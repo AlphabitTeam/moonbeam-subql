@@ -157,3 +157,56 @@ type Delegator @entity {
   id: ID!
   delegations: [Delegation] @derivedFrom(field: "delegator")
 }
+
+type Erc20Token @entity {
+  id: ID!
+  symbol: String
+  name: String
+  decimal: Int
+  supply: BigInt
+  balances: [Erc20Balance] @derivedFrom(field: "token")
+}
+
+type Erc721Token @entity {
+  id: ID!
+  symbol: String
+  name: String
+  balances: [Erc721Balance] @derivedFrom(field: "token")
+}
+type Erc20Balance @entity {
+  id: ID!
+  account: Account
+  token: Erc20Token
+  value: BigInt
+}
+
+type Erc721Balance @entity {
+  id: ID!
+  account: Account
+  token: Erc721Token
+  value: BigInt
+}
+
+type Erc20Transfer @entity {
+  id: ID!
+  from: Account
+  to: Account
+  token: Erc20Token
+  value: BigInt
+  transactionHash: String
+  transactionIndex: Int
+  blockNumber: BigInt
+  timestamp: Date
+}
+
+type Erc721Transfer @entity {
+  id: ID!
+  from: Account
+  to: Account
+  token: Erc721Token
+  value: BigInt
+  transactionHash: String
+  transactionIndex: Int
+  blockNumber: BigInt
+  timestamp: Date
+}

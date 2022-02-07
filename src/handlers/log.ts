@@ -2,7 +2,21 @@ import { MoonbeamEvent } from "@subql/contract-processors/dist/moonbeam";
 import { Log } from '../types'
 import { ensureAccount } from "./account";
 import { ensureBlock } from "./block";
+import { handleTokenTransfer } from "./ethereum";
 import { ensureTransaction } from "./transaction";
+import { Dispatcher } from "./utils/dispatcher";
+import { DispatchedLogData } from "./utils/types";
+
+const dispatch = new Dispatcher<DispatchedLogData>();
+async function dummyFunction(): Promise<void> { }
+
+dispatch.batchRegist([
+  // ERC20 and ERC721 Transfer
+  {
+    key: '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef', 
+    handler: handleTokenTransfer
+  },
+])
 
 export async function ensureLog(event: MoonbeamEvent): Promise<Log> {
   const transaction = await ensureTransaction(event.transactionHash,
@@ -34,4 +48,8 @@ export async function createLog(event: MoonbeamEvent): Promise<void> {
   entity.removed = event.removed
   //data, topics, arguments
   await entity.save()
+  await dispatch.dispatch(event.topics[0].toString(), {
+    event: entity,
+    rawEvent: event,
+  });
 }
