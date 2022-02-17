@@ -9,10 +9,10 @@ schema:
 
 network:
   endpoint: wss://moonbeam.api.onfinality.io/public-ws
-  genesisHash: '0xfe58ea77779b7abda7da4ec526d14db9b1e9cd40a217c34892af80a9b332b76d'
-  dictionary: 'https://api.subquery.network/sq/subquery/moonbeam-dictionary'
+  genesisHash: "0xfe58ea77779b7abda7da4ec526d14db9b1e9cd40a217c34892af80a9b332b76d"
+  dictionary: "https://api.subquery.network/sq/subquery/moonbeam-dictionary"
   chaintypes:
-    file: "./types.yaml"
+    file: "./dist/chaintypes.js"
 
 dataSources:
   - kind: substrate/Runtime
@@ -29,7 +29,7 @@ dataSources:
   - kind: substrate/Moonbeam
     startBlock: 200_000
     processor:
-      file: './node_modules/@subql/contract-processors/dist/moonbeam.js'
+      file: "./node_modules/@subql/contract-processors/dist/moonbeam.js"
     mapping:
       file: ./dist/index.js
       handlers:

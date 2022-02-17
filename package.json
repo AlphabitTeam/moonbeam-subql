@@ -19,9 +19,10 @@
   "author": "Bisola Olasehinde",
   "license": "MIT",
   "devDependencies": {
-    "@polkadot/api": "^7",
+    "@polkadot/api": "^6",
     "@subql/cli": "latest",
     "@subql/types": "latest",
+    "moonbeam-types-bundle": "^2.0.2",
     "typescript": "^4.1.3"
   },
   "dependencies": {
