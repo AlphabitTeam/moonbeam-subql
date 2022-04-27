@@ -1,84 +1,77 @@
-type Block @entity {
-  id: ID!
-  number: BigInt! @index(unique: true)
-  hash: String
-  timestamp: Date
-  parentHash: String
-  specVersion: Int
-  stateRoot: String
-  extrinsicsRoot: String
-  #size: Int
-
-  extrinsics: [Extrinsic] @derivedFrom(field: "block")
-  events: [Event] @derivedFrom(field: "block")
+type KVData @jsonField {
+  name: String
+  value: String
+  type: String
 }
 
 type Extrinsic @entity {
   id: ID!
   hash: String!
-  block: Block!
-  blockNumber: BigInt! @index(unique: false)
-  index: Int!
   isSigned: Boolean
   signer: Account
   section: String
   method: String
-  success: Boolean
-  #arguments: String
-}
-
-type Event @entity {
-  id: ID!
-  block: Block!
-  blockNumber: BigInt! @index(unique: false)
-  index: Int!
-  section: String
-  method: String
-  #docs: String
-  #arguments: String
-  #data: String
-  extrinsic: Extrinsic
+  isSuccess: Boolean
+  signature: String
+  timestamp: Date
+  args: [KVData]
+  calls: [Call] @derivedFrom(field: "extrinsic")
 }
 
 type Account @entity {
   id: ID!
-  nonce: Int
-  updateAt: BigInt
-  #name: String
-  # Balance
+  txCount: Int
   totalBalance: BigInt
   freeBalance: BigInt
   reducibleBalance: BigInt
   reservedBalance: BigInt
   miscFrozenBalance: BigInt
   feeFrozenBalance: BigInt
-  # Contracts
   isContract: Boolean
   creator: Account
   createdAt: String
+  extrinsics: [Extrinsic] @derivedFrom(field: "signer")
+  transferIn: [Transfer] @derivedFrom(field: "to")
+  transferOut: [Transfer] @derivedFrom(field: "from")
+  transactionIn: [Transaction] @derivedFrom(field: "to")
+  transactionOut: [Transaction] @derivedFrom(field: "from")
+  erc20_transferIn: [Erc20Transfer] @derivedFrom(field: "to")
+  erc20_transferOut: [Erc20Transfer] @derivedFrom(field: "from")
+  erc721_transferIn: [Erc721Transfer] @derivedFrom(field: "to")
+  erc721_transferOut: [Erc721Transfer] @derivedFrom(field: "from")
+  erc20_balance: [Erc20Balance] @derivedFrom(field: "account")
+  erc721_balance: [Erc721Balance] @derivedFrom(field: "account")
+}
+
+type Call @entity {
+  id: ID!
+  section: String
+  method: String
+  args:[KVData] 
+  timestamp: Date
+  isSuccess: Boolean
+  signer: Account
+  extrinsic: Extrinsic
+  parentCall: Call
+  calls: [Call] @derivedFrom(field: "parentCall")
 }
 
 type Log @entity {
   id: ID!
-  blockNumber: BigInt
   transaction: Transaction
   transactionIndex: Int
   logIndex: Int
   timestamp: Date
   address: String
-  #data: String
-  #topics: String
-  #arguments: String
+  data: String
+  topics: [String]
+  arguments: String
   removed: Boolean
 }
 
 type Transaction @entity {
   id: ID!
-  # MoonbeamCall.blockNumber? type, that's why it isn't Block!
-  block: Block
-  blockNumber: BigInt
-  #extrinsic: Extrinsic
-  #extrinsicIndex: Int
+  transactionHash: String
   from: Account
   to: Account
   success: Boolean
@@ -86,93 +79,54 @@ type Transaction @entity {
   nonce: Int
   gasLimit: BigInt
   gasPrice: BigInt
-  maxFeePerGas: BigInt
-  type: Int
-  #data: String
-  #arguments: String
+  gasUsed: BigInt
+  input_data: String
   logs: [Log] @derivedFrom(field: "transaction")
-  # gasUsed/fee, extrinsic, transfers
+  erc20_transfer: [Erc20Transfer] @derivedFrom(field: "transaction")
+  erc721_transfer: [Erc721Transfer] @derivedFrom(field: "transaction")
 }
+
+type Erc20Transfer @entity {
+  id: ID!
+  from: Account
+  to: Account
+  token: Erc20Token
+  value: BigInt
+  transaction: Transaction
+  timestamp: Date
+}
+
+type Erc721Transfer @entity {
+  id: ID!
+  from: Account
+  to: Account
+  token: Erc721Token
+  value: BigInt
+  transaction: Transaction
+  timestamp: Date
+}
+
 
 type Transfer @entity {
   id: ID!
-  index: Int!
-  block: Block!
-  blockNumber: BigInt! @index(unique: false)
   from: Account!
   to: Account!
-  value: BigInt!
+  token: Token
+  amount: BigInt!
+  timestamp: Date
+  isSuccess: Boolean
   extrinsic: Extrinsic
 }
 
-type Timeline @jsonField {
-  status: String
-  extrinsic: String
-  timestamp: Date
-}
-
-type Proposal @entity {
+type Token @entity {
   id: ID!
-  propIndex: Int! @index(unique: true)
-  deposit: BigInt
-  author: String
-  preimage: String
-  timeline: [Timeline]
-}
-
-type Referendum @entity {
-  id: ID!
-  refIndex: Int! @index(unique: true)
-  threshold: String
-  timeline: [Timeline]
-  executed: Boolean
-  # preimage: String, delay: Int, end: BigInt
-}
-
-type Reward @entity {
-  id: ID!
-  blockNumber: BigInt! @index(unique: false)
-  account: Account
-  value: BigInt
-  timestamp: Date
-}
-
-type Delegation @entity {
-  id: ID!
-  delegator: Delegator
-  candidate: Candidate
-  value: BigInt! @index(unique: false)
-}
-
-type Candidate @entity {
-  id: ID!
-  joined: Date
-  isChosen: Boolean
-  delegations: [Delegation] @derivedFrom(field: "candidate")
-  selfBonded: BigInt!
-  # blocks mined, totalBonded
-}
-
-type Delegator @entity {
-  id: ID!
-  delegations: [Delegation] @derivedFrom(field: "delegator")
-}
-
-type Erc20Token @entity {
-  id: ID!
-  symbol: String
   name: String
   decimal: Int
-  supply: BigInt
-  balances: [Erc20Balance] @derivedFrom(field: "token")
+  issuance: String
+  volume: String
+  txCount: BigInt
 }
 
-type Erc721Token @entity {
-  id: ID!
-  symbol: String
-  name: String
-  balances: [Erc721Balance] @derivedFrom(field: "token")
-}
 type Erc20Balance @entity {
   id: ID!
   account: Account
@@ -187,26 +141,26 @@ type Erc721Balance @entity {
   value: BigInt
 }
 
-type Erc20Transfer @entity {
+type Erc20Token @entity {
   id: ID!
-  from: Account
-  to: Account
-  token: Erc20Token
-  value: BigInt
-  transactionHash: String
-  transactionIndex: Int
-  blockNumber: BigInt
-  timestamp: Date
+  symbol: String
+  name: String
+  contract_address: String
+  decimals: Int
+  totalSupply: BigInt
+  nb_holders : Int
+  transfer_count: Int
+  balances: [Erc20Balance] @derivedFrom(field: "token")
 }
 
-type Erc721Transfer @entity {
+type Erc721Token @entity {
   id: ID!
-  from: Account
-  to: Account
-  token: Erc721Token
-  value: BigInt
-  transactionHash: String
-  transactionIndex: Int
-  blockNumber: BigInt
-  timestamp: Date
+  symbol: String
+  name: String
+  contract_address: String
+  decimals: Int
+  totalSupply: String
+  nb_holders : Int
+  transfer_count: Int
+  balances: [Erc721Balance] @derivedFrom(field: "token")
 }

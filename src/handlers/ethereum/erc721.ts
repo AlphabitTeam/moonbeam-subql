@@ -1,6 +1,7 @@
 import { ensureAccount } from '../account'
 import { Erc721Token, Erc721Balance, Erc721Transfer } from '../../types'
 import { DispatchedLogData } from '../utils/types'
+import { ensureTransaction } from '../transaction'
 
 const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -10,15 +11,14 @@ export async function createErc721Transfer(data: DispatchedLogData): Promise<voi
   const from = await ensureAccount(`0x${data.rawEvent.topics[1].slice(-40)}`)
   const to = await ensureAccount(`0x${data.rawEvent.topics[2].slice(-40)}`)
   const value = BigInt(data.rawEvent.topics[3])
+  const tx = await ensureTransaction(data.rawEvent.transactionHash)
   const transfer = Erc721Transfer.create({
     id: data.event.id,
     fromId: from.id,
     toId: to.id,
     tokenId: token.id,
     value: value,
-    transactionHash: data.event.transactionId,
-    transactionIndex: data.event.transactionIndex,
-    blockNumber: data.event.blockNumber,
+    transactionId: tx.id,
     timestamp: data.event.timestamp
   })
   await transfer.save()

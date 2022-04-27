@@ -1,5 +1,5 @@
 import { Account } from "../types";
-import { getAccount } from './utils/api'
+import { getAccount, getAccountCode } from './utils/api'
 
 export async function ensureAccount(recordId: string): Promise<Account> {
   // toLowerCase cause some do contain different cases (Checksum Address)
@@ -20,17 +20,24 @@ export async function ensureAccount(recordId: string): Promise<Account> {
   return entity
 }
 
-export async function updateAccount(address: string, blockNumber: bigint): Promise<void> {
+export async function updateAccount(address: string, createdAt?: string, creator?: string, isContract?: boolean): Promise<void> {
   // I still hope I got the balance right
   const entity = await ensureAccount(address)
   const account = await getAccount(entity.id)
-  entity.nonce = account.nonce
+  const acccoutCode = await getAccountCode(address)
+  entity.txCount = account.nonce + 1
+  entity.isContract = isContract !== undefined? isContract: (acccoutCode.length !== 0)
   entity.freeBalance = account.data.free.toBigInt()
   entity.reservedBalance = account.data.reserved.toBigInt()
   entity.miscFrozenBalance = account.data.miscFrozen.toBigInt()
   entity.feeFrozenBalance = account.data.feeFrozen.toBigInt()
   entity.reducibleBalance = entity.freeBalance - entity.miscFrozenBalance - entity.feeFrozenBalance
   entity.totalBalance = entity.freeBalance + entity.reservedBalance
-  entity.updateAt = blockNumber
+  // account creation : balances.Endowed, proxy.AnonymousCreated, system.NewAccount
+  entity.createdAt = createdAt;
+  if(creator) {
+    const creatorEntity  = await ensureAccount(creator);
+    entity.creatorId = creatorEntity.id;
+  }
   entity.save()
 }

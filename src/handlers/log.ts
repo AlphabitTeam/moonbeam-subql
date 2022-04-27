@@ -1,7 +1,6 @@
 import { MoonbeamEvent } from "@subql/contract-processors/dist/moonbeam";
 import { Log } from '../types'
 import { ensureAccount } from "./account";
-import { ensureBlock } from "./block";
 import { handleTokenTransfer } from "./ethereum";
 import { ensureTransaction } from "./transaction";
 import { Dispatcher } from "./utils/dispatcher";
@@ -19,8 +18,7 @@ dispatch.batchRegist([
 ])
 
 export async function ensureLog(event: MoonbeamEvent): Promise<Log> {
-  const transaction = await ensureTransaction(event.transactionHash,
-    event.blockNumber.toString())
+  const transaction = await ensureTransaction(event.transactionHash)
   const transactionIndex = event.transactionIndex
   const logIndex = event.logIndex
   const recordId = `${transaction.id}-${logIndex}`
@@ -39,13 +37,14 @@ export async function ensureLog(event: MoonbeamEvent): Promise<Log> {
 
 export async function createLog(event: MoonbeamEvent): Promise<void> {
   const entity = await ensureLog(event)
-  const block = await ensureBlock(event.blockNumber.toString())
   const address = await ensureAccount(event.address)
-  entity.blockNumber = block.number
   entity.timestamp = event.blockTimestamp
   //null address probably means internalTransaction (So far, not true. No internalTransaction)  
   entity.address = address.id
   entity.removed = event.removed
+  entity.data = event.data
+  entity.topics = event.topics
+  entity.arguments = event.args?.toString()
   //data, topics, arguments
   await entity.save()
   await dispatch.dispatch(event.topics[0].toString(), {
