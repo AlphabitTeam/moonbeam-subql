@@ -20,6 +20,7 @@ export async function createTransaction(call: MoonbeamCall): Promise<void> {
 
   entity.fromId = from.id
   entity.toId = to?.id
+  entity.transactionHash = call.hash;
   entity.success = call.success
   entity.value = call.value.toBigInt()
   entity.nonce = call.nonce

@@ -14,6 +14,8 @@ export async function ensureCall(recordId: string): Promise<Call> {
 
 export async function createCall(call: MoonbeamCall): Promise<void> {
     const entity = await ensureCall(call.hash);
+    entity.section = 'ethereum';
+    entity.method = 'transact';
     entity.timestamp = new Date(call.timestamp);
     entity.isSuccess = call.success;
     const signer = await ensureAccount(call.from);

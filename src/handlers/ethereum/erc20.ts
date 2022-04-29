@@ -26,7 +26,6 @@ export async function createErc20Transfer(
     timestamp: data.event.timestamp,
   });
   await transfer.save();
-  const info = await getContractInfo(data.rawEvent.address);
 
   // Minting and burning
   if (from.id === NULL_ADDRESS) {
@@ -34,9 +33,10 @@ export async function createErc20Transfer(
   } else if (to.id === NULL_ADDRESS) {
     erc20token.totalSupply -= value;
   }
+  
+  erc20token.contract_address = data.rawEvent.address;
   await erc20token.save();
 
-  const issuance = await getIssuannce();
   //add txCount 
   token.txCount += BigInt(1);
 

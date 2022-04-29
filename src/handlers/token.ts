@@ -12,7 +12,3 @@ export async function ensureToken(address: string){
   return entity;
 
 }
-
-export async function createToken(address: string) {
-    let en
-}

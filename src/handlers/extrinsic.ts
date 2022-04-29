@@ -38,6 +38,7 @@ export async function createExtrinsic(extrinsic: SubstrateExtrinsic): Promise<vo
   entity.section = extrinsic.extrinsic.method.section
   entity.method = extrinsic.extrinsic.method.method
   entity.isSuccess = extrinsic.success
+  entity.signature = extrinsic.extrinsic.signature.toString();
   entity.timestamp = extrinsic.block.timestamp
 
   const args = extrinsic.extrinsic.args;
@@ -47,8 +48,6 @@ export async function createExtrinsic(extrinsic: SubstrateExtrinsic): Promise<vo
   
   entity.args = argsData;
   await entity.save()
-  
-  logger.info(`${entity.section}-${entity.method}`)
 
   await dispatcher.dispatch(`${entity.section}-${entity.method}`, {
     extrinsic: entity,
