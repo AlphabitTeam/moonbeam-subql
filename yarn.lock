@@ -1169,7 +1169,7 @@
     rotating-file-stream "^3.0.2"
     sequelize "^6.6.2"
 
-"@subql/contract-processors@^0.5.5":
+"@subql/contract-processors@^0.5.5-0":
   version "0.5.5-0"
   resolved "https://registry.yarnpkg.com/@subql/contract-processors/-/contract-processors-0.5.5-0.tgz#b9e25c943a993458908ff477c384e8d9f271f048"
   integrity sha512-sIC7Nwbt+74BRNcLRooO6GKzV/jQPeKB8LsllgaGxQbAxsjlhrVi3sEJ2gr9hRrD1rCYtm+/AhWmMzLopLjG0g==
