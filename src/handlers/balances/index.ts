@@ -30,8 +30,11 @@ export async function endowed(data:DispatchedEventData): Promise<void> {
   const createdAt = data.rawEvent.block.createdAtHash;
   const creator = data.rawEvent.extrinsic?.extrinsic.signer;
   const account = await ensureAccount(address);
-  account.createdAt = createdAt?.toString();
-  account.creatorId = creator?.toString();
+  account.createdAt = createdAt ? createdAt.toString() : null;
+  if(creator) {
+    const creatorEntity = await ensureAccount(creator.toString());
+    account.creatorId = creatorEntity.id;
+  }
   account.freeBalance = BigInt(balance);
   await account.save();
 }
