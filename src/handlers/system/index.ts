@@ -1,11 +1,11 @@
-import { updateAccount } from "../account";
+import { updateAccount, ensureAccount } from "../account";
 import { ensureTransaction } from "../transaction";
 import { DispatchedEventData } from "../utils/types";
 
 export async function newAccount(event: DispatchedEventData) {
     const [accountId] = event.rawEvent.event.data.toJSON() as [string];
     const createdAt = event.rawEvent.hash.toString();
-    const creator = event.rawEvent.extrinsic.extrinsic.signer.toString();
+    const creator = event.rawEvent.extrinsic?.extrinsic.signer.toString();
     await updateAccount(accountId, createdAt, creator, false)
 }
 
