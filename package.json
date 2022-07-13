@@ -9,14 +9,14 @@
     "test": "jest",
     "codegen": "./node_modules/.bin/subql codegen"
   },
-  "homepage": "https://github.com/parascan-xyz/moonbeam-subquery",
+  "homepage": "https://github.com/parascan-xyz/moonbeam-subql",
   "repository": "github:parascan-xyz/moonbeam-subquery",
   "files": [
     "dist",
     "schema.graphql",
     "project.yaml"
   ],
-  "author": "Bisola Olasehinde",
+  "author": "Alphabit Team",
   "license": "MIT",
   "devDependencies": {
     "@polkadot/api": "^7",
